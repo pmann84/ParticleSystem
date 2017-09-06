@@ -12,3 +12,5 @@
 *.opendb
 *.db
 *.opensdf
+Debug
+Release
