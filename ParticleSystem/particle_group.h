@@ -34,6 +34,7 @@ namespace ps
 
 		void particle_life(int steps, bool randomised, int variance = 1);
 		std::vector<particle> particles() const { return m_particles; };
+		void draw_domains(domain_draw_interface& drawer);
 
 	private:
 		std::vector<particle> m_particles;

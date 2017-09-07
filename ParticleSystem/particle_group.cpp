@@ -107,6 +107,13 @@ void ps::particle_group::particle_life(int steps, bool randomised = false, int v
 	m_particle_life_variance = variance;
 }
 
+void ps::particle_group::draw_domains(domain_draw_interface& drawer)
+{
+	m_source_domain->draw(drawer);
+	m_velocity_domain->draw(drawer);
+	//draw_interface->draw(m_sink_domain); 
+}
+
 ps::vector3d ps::particle_group::calculate_force(vector3d position, vector3d velocity)
 {
 	return m_const_force_vector;
