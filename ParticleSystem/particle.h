@@ -14,7 +14,13 @@
 // TODO: Implement camera controls
 // TODO: Make sink domains work correctly
 // TODO: Implement more modifiers e.g. bounce, avoid, orbit etc
-// TODO: Implement more domains
+// TODO: Implement Plane Domain
+// TODO: Implement Cylinder Domain
+// TODO: Implement sphere Domain
+// TODO: Implement Box (3D) domain
+// TODO: Implement Cone domain
+// TODO: Implement Triangle domain
+// TODO: Implement Rectangle (2d) domain
 // TODO: Make multiple sources work correctly
 // TODO: Make multiple sinks work correctly
 
@@ -28,6 +34,9 @@ namespace ps
 
 		vector3d position() const { return m_position; }
 		void position(vector3d position) { m_position = position; }
+
+		vector3d previous_position() const { return m_previous_position; }
+		void previous_position(vector3d previous_position) { m_previous_position = previous_position; }
 
 		vector3d velocity() const { return m_velocity; }
 		void velocity(vector3d velocity) { m_velocity = velocity; }
@@ -65,6 +74,7 @@ namespace ps
 
 	private:
 		vector3d m_position;
+		vector3d m_previous_position;
 		vector3d m_velocity;
 		vector3i m_colour;
 		double m_alpha;

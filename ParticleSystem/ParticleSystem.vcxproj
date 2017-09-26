@@ -111,6 +111,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="domain.h" />
+    <ClInclude Include="idomain.h" />
+    <ClInclude Include="idomain_draw.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="particle_group.h" />
     <ClInclude Include="particle_utils.h" />

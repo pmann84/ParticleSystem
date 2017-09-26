@@ -30,6 +30,12 @@
     <ClInclude Include="particle_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="idomain_draw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="idomain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Particle.cpp">

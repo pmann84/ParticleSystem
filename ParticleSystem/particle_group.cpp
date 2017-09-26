@@ -28,7 +28,12 @@ ps::particle_group& ps::particle_group::update()
 	for (auto& particle : m_particles)
 	{
 		// Particle destruction
-		if (!particle.is_alive())
+		bool particle_entered_sink = false;
+		if (m_sink_domain)
+		{
+			particle_entered_sink = m_sink_domain->has_entered_domain(particle);
+		}
+		if (!particle.is_alive() || particle_entered_sink)
 		{
 			// Kill any particles that are past their life or hit the sink
 			particle.reset();
@@ -107,11 +112,14 @@ void ps::particle_group::particle_life(int steps, bool randomised = false, int v
 	m_particle_life_variance = variance;
 }
 
-void ps::particle_group::draw_domains(domain_draw_interface& drawer)
+void ps::particle_group::draw_domains(idomain_draw& drawer)
 {
 	m_source_domain->draw(drawer);
 	m_velocity_domain->draw(drawer);
-	//draw_interface->draw(m_sink_domain); 
+	if (m_sink_domain)
+	{
+		m_sink_domain->draw(drawer);
+	}
 }
 
 ps::vector3d ps::particle_group::calculate_force(vector3d position, vector3d velocity)
@@ -124,6 +132,8 @@ void ps::particle_group::advance_particle(particle& particle)
 	// Advance particle position using *PHYSICS* - here most actions 
 	// can be calculated in terms of forces that can be used in newtons 
 	// 3rd law solution, algorithm is thus (midpoint/euler-richardson):
+	// First update old position
+	particle.previous_position() = particle.position();
 	// Get accn at current pos, vel and time
 	vector3d acc_n = calculate_force(particle.position(), particle.velocity()) / particle.mass();
 	// Calculate velocity at mid point of time step

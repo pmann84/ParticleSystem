@@ -98,30 +98,34 @@ void particle_demo_app::init_window(int argc, char* args[])
 	glEnable(GL_DEPTH_TEST);
 }
 
-particle_demo_app::particle_demo_app() : p_group(5000, 5), m_domain_drawer()
+particle_demo_app::particle_demo_app() : p_group(5000, 25), m_domain_drawer()
 {
 	p_group.time_interval(0.05);
-	p_group.particle_life(250, true);
+	p_group.particle_life(500, true);
 }
 
 void particle_demo_app::update()
 {	
 
-	//std::shared_ptr<ps::domain> source_domain = std::make_shared<ps::point_domain>(ps::vector3d(0.0f, 0.0f, 0.0f));
-	//std::shared_ptr<ps::domain> source_domain = std::make_shared<ps::line_domain>(ps::vector3d(0.0f, 0.0f, -5.0f), ps::vector3d(-0.1f, 0.0f, 0.0f), 1.5);
-	std::shared_ptr<ps::domain> source_domain = std::make_shared<ps::disk_domain>(ps::vector3d(0.0f, 0.0f, 0.0f), 0.1, 0.25, M_PI / 2, M_PI / 2, 2.5);
+	//std::shared_ptr<ps::idomain> source_domain = std::make_shared<ps::point_domain>(ps::vector3d(0.0f, 0.0f, 0.0f));
+	//std::shared_ptr<ps::idomain> source_domain = std::make_shared<ps::line_domain>(ps::vector3d(0.0f, 0.0f, -5.0f), ps::vector3d(-0.1f, 0.0f, 0.0f), 1.5);
+	std::shared_ptr<ps::idomain> source_domain = std::make_shared<ps::disk_domain>(ps::vector3d(0.0f, 0.0f, 0.0f), 0.1, 0.25, M_PI / 2, M_PI / 2, 2.5);
 
-	std::shared_ptr<ps::domain> velocity_domain = std::make_shared<ps::disk_domain>(ps::vector3d(0.0f, 5.0f, 0.0f), 0.75, 1.5, M_PI/2, M_PI/2, 2.5);
-	//std::shared_ptr<ps::domain> velocity_domain = std::make_shared<ps::line_domain>(ps::vector3d(-0.1, 1.0f, 0.0f), ps::vector3d(0.1f, 1.0f, 0.0f), 1.5);
-	//std::shared_ptr<ps::domain> velocity_domain = std::make_shared<ps::point_domain>(ps::vector3d(3.0f, 3.0f, 0.0f), 1.5);
+	std::shared_ptr<ps::idomain> velocity_domain = std::make_shared<ps::disk_domain>(ps::vector3d(0.0f, 5.0f, 0.0f), 0.75, 1.5, M_PI/2, M_PI/2, 2.5);
+	//std::shared_ptr<ps::idomain> velocity_domain = std::make_shared<ps::line_domain>(ps::vector3d(-0.1, 1.0f, 0.0f), ps::vector3d(0.1f, 1.0f, 0.0f), 1.5);
+	//std::shared_ptr<ps::idomain> velocity_domain = std::make_shared<ps::point_domain>(ps::vector3d(3.0f, 3.0f, 0.0f), 1.5);
+
+	std::shared_ptr<ps::idomain> sink_domain = std::make_shared<ps::disk_domain>(ps::vector3d(0.0f, -0.5f, 0.0f), 1.0, 5.0, M_PI / 2, M_PI / 2, 2.5);
+
 	ps::vector3d gravity_vector(0.0, -2.0, 0.0);
-	float random_vel_range = 5.0;
-	ps::vector3d wind_vector(ps::generate_random_number_in_range(-random_vel_range, random_vel_range), 
-							 ps::generate_random_number_in_range(-random_vel_range, random_vel_range), 
-							 ps::generate_random_number_in_range(-random_vel_range, random_vel_range));
+	//float random_vel_range = 5.0;
+	//ps::vector3d wind_vector(ps::generate_random_number_in_range(-random_vel_range, random_vel_range), 
+	//						 ps::generate_random_number_in_range(-random_vel_range, random_vel_range), 
+	//						 ps::generate_random_number_in_range(-random_vel_range, random_vel_range));
 	
 	p_group.source(source_domain)
 		   .velocity(velocity_domain)
+		   .sink(sink_domain)
 		   .constant_force(gravity_vector)
 		   .update();
 }

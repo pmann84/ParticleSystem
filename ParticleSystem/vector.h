@@ -128,6 +128,11 @@ namespace ps
 			}
 		}
 
+		TYPE distance(vector3 vector)
+		{
+			return std::sqrt(inner_product(*this, vector));
+		}
+
 		// Dot/Scalar Product a . b, this is the Inner Product as defined for Rn, 
 		// which is a way to multiply vectors together that results in a scalar
 		friend TYPE inner_product(const vector3<TYPE>& lhs, const vector3<TYPE>& rhs)

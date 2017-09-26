@@ -1,12 +1,8 @@
 #include "domain.h"
 #include "particle_utils.h"
 
-ps::domain::~domain()
-{
-}
-
 // POINT DOMAIN
-ps::point_domain::point_domain(vector3d point, double speed) : domain(), m_point(point), m_speed(speed)
+ps::point_domain::point_domain(vector3d point, double speed) : idomain(), m_point(point), m_speed(speed)
 {
 }
 
@@ -23,7 +19,16 @@ ps::vector3d ps::point_domain::generate_velocity(vector3d start_position)
 	return velocity_vector;
 }
 
-void ps::point_domain::draw(domain_draw_interface& draw_interface)
+bool ps::point_domain::has_entered_domain(particle particle)
+{
+	// c is point from domain a and b are start and end of line
+	// need to return distance(A, C) + distance(B, C) == distance(A, B)
+	vector3d start_point = particle.previous_position();
+	vector3d end_point = particle.position();
+	return start_point.distance(m_point) + end_point.distance(m_point) == start_point.distance(end_point);
+}
+
+void ps::point_domain::draw(idomain_draw& draw_interface)
 {
 	draw_interface.draw(this);
 }
@@ -53,7 +58,16 @@ ps::vector3d ps::line_domain::generate_velocity(vector3d start_position)
 	return velocity_vector;
 }
 
-void ps::line_domain::draw(domain_draw_interface& draw_interface)
+bool ps::line_domain::has_entered_domain(particle particle)
+{
+	// Intersection point 
+	// Px = ((x1*y2 - y1*x2)(x3 - x4) - (x1 - x2)(x3*y4 - y3*x4))/((x1 - x2)(y3 - y4) - (y1 - y2)(x3 - x4))
+	// Py = ((x1*y2 - y1*x2)(y3 - y4) - (y1 - y2)(x3*y4 - y3*x4))/((x1 - x2)(y3 - y4) - (y1 - y2)(x3 - x4))
+	//double intersect_x = 
+	return false;
+}
+
+void ps::line_domain::draw(idomain_draw& draw_interface)
 {
 	draw_interface.draw(this);
 }
@@ -106,7 +120,7 @@ ps::vector3d ps::disk_domain::generate_position()
 	}
 
 	// Generate random angle
-	double random_angle = generate_random_number_in_range(0.0, M_PI);
+	double random_angle = generate_random_number_in_range(0.0, 2*M_PI);
 	return generate_position(random_radius, random_angle);
 
 }
@@ -120,7 +134,46 @@ ps::vector3d ps::disk_domain::generate_velocity(vector3d start_position)
 	return velocity_vector;
 }
 
-void ps::disk_domain::draw(domain_draw_interface& draw_interface)
+bool ps::disk_domain::has_entered_domain(particle particle)
+{
+	// 0 = disjoint(no intersection)
+	// 1 =  intersection in the unique point *I0
+	// 2 = the  segment lies in the plane
+	vector3d start = particle.previous_position();
+	vector3d end = particle.position();
+	vector3d normal(cos(m_phi)*sin(m_theta), sin(m_theta)*sin(m_phi), cos(m_theta));
+
+	// plane point = m_disc_centre
+	vector3d u = end - start;
+	vector3d w = start - m_disc_centre;
+
+	double D = inner_product(normal, u);
+	double N = -inner_product(normal, w);
+	
+	if (std::abs(D) < 0.00000001) // segment is parallel to plane
+	{
+		if (N == 0) 
+		{
+			return true; // segment lies in plane (2)
+		}
+		else
+		{
+			return false; // no intersection (0)
+		}			 
+	}
+	// they are not parallel
+	// compute intersect param
+	const double sI = N / D;
+	if (sI < 0 || sI > 1)
+	{
+		return false; // no intersection (0)
+	}
+	vector3d intersect_point = start + sI * u; // compute segment intersect point
+	double radius_from_centre = (intersect_point - m_disc_centre).norm();
+	return radius_from_centre < m_outer_radius && radius_from_centre > m_inner_radius; // intersection in the unique point (1)
+}
+
+void ps::disk_domain::draw(idomain_draw& draw_interface)
 {
 	draw_interface.draw(this);
 }
@@ -138,8 +191,4 @@ ps::vector3d ps::disk_domain::generate_position(float radius, float angle)
 	// Calculate the final position
 	vector3d newpos(radius*cos(angle)*perp + radius*sin(angle)*ncrossp + m_disc_centre);
 	return newpos;
-}
-
-ps::domain_draw_interface::~domain_draw_interface()
-{
 }

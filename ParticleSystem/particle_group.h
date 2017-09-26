@@ -12,7 +12,7 @@
 
 namespace ps
 {
-	using domain_ptr = std::shared_ptr<domain>;
+	using domain_ptr = std::shared_ptr<idomain>;
 
 	class particle_group
 	{
@@ -34,7 +34,7 @@ namespace ps
 
 		void particle_life(int steps, bool randomised, int variance = 1);
 		std::vector<particle> particles() const { return m_particles; };
-		void draw_domains(domain_draw_interface& drawer);
+		void draw_domains(idomain_draw& drawer);
 
 	private:
 		std::vector<particle> m_particles;

@@ -8,7 +8,7 @@
 
 #include "../ParticleSystem/domain.h"
 
-class opengl_domain_drawer : public ps::domain_draw_interface
+class opengl_domain_drawer : public ps::idomain_draw
 {
 public:
 	void draw(ps::point_domain* domain) override;
