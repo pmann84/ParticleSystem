@@ -11,9 +11,12 @@
 // MODIFIER - Specifies how attributes should behave in the simulation, so this can be acted upon by physical forces e.g. gravity or something that has no physical analogy
 // Utilities - Static methods to control advancing the simulation of several groups, etc
 
+// TODO: NEW FEATURES
+// TODO: Implement line and point intersection logic
 // TODO: Implement camera controls
-// TODO: Make sink domains work correctly
-// TODO: Implement more modifiers e.g. bounce, avoid, orbit etc
+// TODO: Implement bounce modifier
+// TODO: Implement avoid modifier
+// TODO: Implement orbit modifier
 // TODO: Implement Plane Domain
 // TODO: Implement Cylinder Domain
 // TODO: Implement sphere Domain
@@ -23,14 +26,18 @@
 // TODO: Implement Rectangle (2d) domain
 // TODO: Make multiple sources work correctly
 // TODO: Make multiple sinks work correctly
+// TODO: BUGS
+// TODO: Fix flickering when particles stick on disk domain, also particles that fall through domain after sticking
+// TODO: Fix issue with bouncing - possibly something to do with the fact the particles are moved onto the domain - sort out bounce velocity also sometimes incorrect
 
 namespace ps
 {
 	class particle
 	{
 	public:
-		particle();
-		particle(vector3d position, vector3d velocity);
+		particle() = default;
+		explicit particle(int id);
+		particle(int id, vector3d position, vector3d velocity);
 
 		vector3d position() const { return m_position; }
 		void position(vector3d position) { m_position = position; }
@@ -73,6 +80,7 @@ namespace ps
 		}
 
 	private:
+		int m_id;
 		vector3d m_position;
 		vector3d m_previous_position;
 		vector3d m_velocity;
