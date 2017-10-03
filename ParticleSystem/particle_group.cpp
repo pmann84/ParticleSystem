@@ -222,14 +222,7 @@ void ps::particle_group::advance_particle(particle& particle)
 
 unsigned ps::particle_group::generate_particle_life() const
 {
-	if (m_randomised_particle_life)
-	{
-		std::default_random_engine generator;
-		auto dist = std::normal_distribution<double>(m_particle_life, m_particle_life_variance);
-		const double random_step = dist(generator);
-		return (int)random_step;
-	}
-	return m_particle_life;
+	return m_randomised_particle_life == true ? generate_normal_random_variate<unsigned>(m_particle_life, m_particle_life_variance) : m_particle_life;
 }
 
 unsigned ps::particle_group::num_particles_alive()
@@ -247,12 +240,5 @@ unsigned ps::particle_group::num_particles_alive()
 
 double ps::particle_group::generate_particle_speed() const
 {
-	if (m_randomised_velocity_speed)
-	{
-		std::default_random_engine generator;
-		auto dist = std::normal_distribution<double>(m_velocity_speed, m_velocity_variance);
-		const double random_step = dist(generator);
-		return random_step;
-	}
-	return m_velocity_speed;
+	return m_randomised_velocity_speed == true ? generate_normal_random_variate<double>(m_velocity_speed, m_velocity_variance) : m_velocity_speed;
 }

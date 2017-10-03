@@ -9,6 +9,7 @@
 #include "vector.h"
 #include "particle.h"
 #include "domain.h"
+#include "particle_utils.h"
 
 namespace ps
 {
