@@ -26,9 +26,10 @@
 // TODO: Implement Rectangle (2d) domain
 // TODO: Make multiple sources work correctly
 // TODO: Make multiple sinks work correctly
+// TODO: 
 // TODO: BUGS
 // TODO: Fix flickering when particles stick on disk domain, also particles that fall through domain after sticking
-// TODO: Fix issue with bouncing - possibly something to do with the fact the particles are moved onto the domain - sort out bounce velocity also sometimes incorrect
+// TODO: Fix issue with bouncing - possibly something to do with the fact the particles are moved onto the domain - sort out bounce velocity also incorrect
 
 namespace ps
 {

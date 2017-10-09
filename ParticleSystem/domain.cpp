@@ -19,7 +19,7 @@ ps::vector3d ps::point_domain::generate_velocity(vector3d start_position, double
 	return velocity_vector;
 }
 
-bool ps::point_domain::has_entered_domain(particle particle)
+bool ps::point_domain::has_entered_domain(const particle& particle) const
 {
 	// c is point from domain a and b are start and end of line
 	// need to return distance(A, C) + distance(B, C) == distance(A, B)
@@ -28,7 +28,7 @@ bool ps::point_domain::has_entered_domain(particle particle)
 	return start_point.distance(m_point) + end_point.distance(m_point) == start_point.distance(end_point);
 }
 
-ps::vector3d ps::point_domain::particle_domain_intersection(particle particle)
+ps::vector3d ps::point_domain::particle_domain_intersection(const particle& particle) const
 {
 	// TODO: Implement intersection calculation here
 	return m_point;
@@ -70,7 +70,7 @@ ps::vector3d ps::line_domain::generate_velocity(vector3d start_position, double 
 	return velocity_vector;
 }
 
-bool ps::line_domain::has_entered_domain(particle particle)
+bool ps::line_domain::has_entered_domain(const particle& particle) const
 {
 	// TODO: Implement intersection detection here
 	// Intersection point 
@@ -80,7 +80,7 @@ bool ps::line_domain::has_entered_domain(particle particle)
 	return false;
 }
 
-ps::vector3d ps::line_domain::particle_domain_intersection(particle particle)
+ps::vector3d ps::line_domain::particle_domain_intersection(const particle& particle) const
 {
 	// TODO: Implement intersection calculation here
 	return vector3d();
@@ -132,7 +132,7 @@ ps::vector3d ps::disk_domain::generate_velocity(vector3d start_position, double 
 	return velocity_vector;
 }
 
-bool ps::disk_domain::has_entered_domain(particle particle)
+bool ps::disk_domain::has_entered_domain(const particle& particle) const
 {
 	try
 	{
@@ -147,7 +147,7 @@ bool ps::disk_domain::has_entered_domain(particle particle)
 }
 
 // Throws exception on no intersection
-ps::vector3d ps::disk_domain::particle_domain_intersection(particle particle)
+ps::vector3d ps::disk_domain::particle_domain_intersection(const particle& particle) const
 {
 	// 0 = disjoint(no intersection)
 	// 1 =  intersection in the unique point *I0

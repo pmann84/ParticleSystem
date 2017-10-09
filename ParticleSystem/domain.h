@@ -27,8 +27,8 @@ namespace ps
 
 		vector3d generate_position() override;
 		vector3d generate_velocity(vector3d start_position, double speed) override;
-		bool has_entered_domain(particle particle) override;
-		vector3d particle_domain_intersection(particle particle) override;
+		bool has_entered_domain(const particle& particle) const override;
+		vector3d particle_domain_intersection(const particle& particle) const override;
 		vector3d normal() override;
 		void draw(idomain_draw& draw_interface) override;
 
@@ -45,8 +45,8 @@ namespace ps
 
 		vector3d generate_position() override;
 		vector3d generate_velocity(vector3d start_position, double speed) override;
-		bool has_entered_domain(particle particle) override;
-		vector3d particle_domain_intersection(particle particle) override;
+		bool has_entered_domain(const particle& particle) const override;
+		vector3d particle_domain_intersection(const particle& particle) const override;
 		vector3d normal() override;
 		void draw(idomain_draw& draw_interface) override;
 
@@ -66,8 +66,8 @@ namespace ps
 
 		vector3d generate_position() override;
 		vector3d generate_velocity(vector3d start_position, double speed) override;
-		bool has_entered_domain(particle particle) override;
-		vector3d particle_domain_intersection(particle particle) override;
+		bool has_entered_domain(const particle& particle) const override;
+		vector3d particle_domain_intersection(const particle& particle) const override;
 		vector3d normal() override;
 		void draw(idomain_draw& draw_interface) override;
 
