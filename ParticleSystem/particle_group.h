@@ -5,6 +5,7 @@
 #include <memory>
 #include <random>
 #include <iostream>
+#include <algorithm>
 
 #include "vector.h"
 #include "particle.h"

@@ -25,20 +25,35 @@ ps::particle_group::particle_group(unsigned max_particles, unsigned particle_emi
 
 ps::particle_group& ps::particle_group::update()
 {
-	for (auto& particle : m_particles)
-	{
-		// Particle destruction
-		bool particle_entered_sink = false;
-		if (m_sink_domain)
+	//for (auto& particle : m_particles)
+	//{
+	//	// Particle destruction
+	//	bool particle_entered_sink = false;
+	//	if (m_sink_domain)
+	//	{
+	//		particle_entered_sink = m_sink_domain->has_entered_domain(particle);
+	//	}
+	//	if (!particle.is_alive() || particle_entered_sink)
+	//	{
+	//		// Kill any particles that are past their life or hit the sink
+	//		particle.reset();
+	//	}
+	//}
+	std::for_each(m_particles.begin(), m_particles.end(), 
+		[this](particle& particle)
 		{
-			particle_entered_sink = m_sink_domain->has_entered_domain(particle);
-		}
-		if (!particle.is_alive() || particle_entered_sink)
-		{
-			// Kill any particles that are past their life or hit the sink
-			particle.reset();
-		}
-	}
+			// Particle destruction
+			bool particle_entered_sink = false;
+			if (m_sink_domain)
+			{
+				particle_entered_sink = m_sink_domain->has_entered_domain(particle);
+			}
+			if (!particle.is_alive() || particle_entered_sink)
+			{
+				// Kill any particles that are past their life or hit the sink
+				particle.reset();
+			}
+		});
 
 	// Figure out number of particles to create - will now always be > 0
 	const unsigned int num_p_alive = num_particles_alive();
