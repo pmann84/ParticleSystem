@@ -25,20 +25,6 @@ ps::particle_group::particle_group(unsigned max_particles, unsigned particle_emi
 
 ps::particle_group& ps::particle_group::update()
 {
-	//for (auto& particle : m_particles)
-	//{
-	//	// Particle destruction
-	//	bool particle_entered_sink = false;
-	//	if (m_sink_domain)
-	//	{
-	//		particle_entered_sink = m_sink_domain->has_entered_domain(particle);
-	//	}
-	//	if (!particle.is_alive() || particle_entered_sink)
-	//	{
-	//		// Kill any particles that are past their life or hit the sink
-	//		particle.reset();
-	//	}
-	//}
 	std::for_each(m_particles.begin(), m_particles.end(), 
 		[this](particle& particle)
 		{
@@ -48,7 +34,7 @@ ps::particle_group& ps::particle_group::update()
 			{
 				particle_entered_sink = m_sink_domain->has_entered_domain(particle);
 			}
-			if (!particle.is_alive() || particle_entered_sink)
+			if (particle.is_dead() || particle_entered_sink)
 			{
 				// Kill any particles that are past their life or hit the sink
 				particle.reset();
@@ -65,48 +51,51 @@ ps::particle_group& ps::particle_group::update()
 	for (auto& particle : m_particles)
 	{
 		// Particle Simulation
-		if (particle.is_alive())
+		if (!particle.is_dead())
 		{
-			if (m_stick_domain && m_stick_domain->has_entered_domain(particle))
-			{
-				// Update position to be intersection on the domain
-				vector3d new_pos = m_stick_domain->particle_domain_intersection(particle);
-				particle.position(new_pos);
-				// Set velocity and accn to 0 so it doesnt move
-				particle.velocity(vector3d());
-			}
-			else
-			{
-				if (m_bounce_domain && m_bounce_domain->has_entered_domain(particle))
-				{
-					// Update position to be intersection on the domain
-					vector3d new_pos = m_bounce_domain->particle_domain_intersection(particle);
-					particle.position(new_pos);
-					// Update velocity to be appropriate for a bounce off the domain
-					vector3d domain_norm = m_bounce_domain->normal();
-					vector3d bounce_velocity = -m_bounce_dampening*particle.velocity();
-					double ct = cos(M_PI);
-					double st = sin(M_PI);
-					double omct = (1.0 - ct);
-					double R11 = ct + domain_norm[0] * domain_norm[0] * omct;
-					double R12 = domain_norm[0] * domain_norm[1] * omct - domain_norm[2] * st;
-					double R13 = domain_norm[0] * domain_norm[2] * omct + domain_norm[1] * st;
-					double R21 = domain_norm[1] * domain_norm[0] * omct + domain_norm[2] * st;
-					double R22 = ct + domain_norm[1] * domain_norm[1] * omct;
-					double R23 = domain_norm[1] * domain_norm[2] * omct - domain_norm[0] * st;
-					double R31 = domain_norm[2] * domain_norm[0] * omct - domain_norm[1] * st;
-					double R32 = domain_norm[2] * domain_norm[1] * omct + domain_norm[0] * st;
-					double R33 = ct + domain_norm[2] * domain_norm[2] * omct;
-					vector3d new_vel = vector3d(bounce_velocity[0]*R11 + bounce_velocity[1]*R12 + bounce_velocity[2]*R13, 
-												bounce_velocity[0]*R21 + bounce_velocity[1]*R22 + bounce_velocity[2]*R23, 
-												bounce_velocity[0]*R31 + bounce_velocity[1]*R32 + bounce_velocity[2]*R33);
-					particle.velocity(new_vel);
-				}
-				// Advance particle position using *PHYSICS*
-				advance_particle(particle);
-			}
-			// Increment the age of the particle
-			particle.birthday();
+         if (!particle.is_static())
+         {
+            if (m_stick_domain && m_stick_domain->has_entered_domain(particle))
+            {
+               // Update position to be intersection on the domain
+               vector3d new_pos = m_stick_domain->particle_domain_intersection(particle);
+               particle.position(new_pos);
+               // Set velocity and accn to 0 so it doesnt move
+               particle.velocity(vector3d());
+               // Finally set this to static so that it won't be updated!!!
+               particle.set_static(true);
+            }
+            else
+            {
+               if (m_bounce_domain && m_bounce_domain->has_entered_domain(particle))
+               {
+                  // Update position to be intersection on the domain
+                  vector3d new_pos = m_bounce_domain->particle_domain_intersection(particle);
+                  //new_pos += vector3d(0.0, 0.001, 0.0);
+                  particle.position(new_pos);
+                  if (particle.velocity().norm() > 1e-16)
+                  {
+                     // Update velocity to be appropriate for a bounce off the domain
+                     vector3d domain_norm = m_bounce_domain->normal();
+                     // Full particle collision calc
+                     vector3d mom_change = ((1.0 + m_bounce_dampening) * inner_product(particle.velocity(), domain_norm) * particle.mass()) * domain_norm;
+                     vector3d new_vel = particle.velocity() - mom_change;
+                     particle.velocity(new_vel);
+                  }
+                  else
+                  {
+                     // Set velocity and accn to 0 so it doesnt move
+                     particle.velocity(vector3d());
+                     // Finally set this to static so that it won't be updated!!!
+                     particle.set_static(true);
+                  }
+               }
+               // Advance particle position using *PHYSICS*
+               advance_particle(particle);
+            }
+         }
+         // Increment the age of the particle
+         particle.birthday();
 		}
 		else
 		{
@@ -115,16 +104,18 @@ ps::particle_group& ps::particle_group::update()
 				// Particle Creation
 				// Generate particles from source (if any)
 				// Get position from source domain 
-				vector3d pos = m_source_domain->generate_position();
+				const vector3d pos = m_source_domain->generate_position();
 				// Get velocity using velocity domain
-				vector3d vel = m_velocity_domain->generate_velocity(pos, generate_particle_speed());
+				const vector3d vel = m_velocity_domain->generate_velocity(pos, generate_particle_speed());
 				// Generate particle life
-				int life = generate_particle_life();
+				const unsigned int life = generate_particle_life();
 				// Update a particle that is dead
+            particle.previous_position(pos);
 				particle.position(pos);
 				particle.velocity(vel);
 				particle.life(life);
 				particle.birthday();
+            particle.set_static(false);
 				// Decrease counter
 				num_particles_to_create--;
 			}
@@ -235,9 +226,9 @@ void ps::particle_group::advance_particle(particle& particle)
 	particle.velocity(vel_np1);
 }
 
-unsigned ps::particle_group::generate_particle_life() const
+unsigned int ps::particle_group::generate_particle_life() const
 {
-	return m_randomised_particle_life == true ? generate_normal_random_variate<unsigned>(m_particle_life, m_particle_life_variance) : m_particle_life;
+	return m_randomised_particle_life ? generate_normal_random_variate<unsigned int>(m_particle_life, m_particle_life_variance) : m_particle_life;
 }
 
 unsigned ps::particle_group::num_particles_alive()
@@ -245,7 +236,7 @@ unsigned ps::particle_group::num_particles_alive()
 	unsigned int num_particles_alive = 0;
 	for (auto& particle : m_particles)
 	{
-		if (particle.is_alive())
+		if (!particle.is_dead())
 		{
 			num_particles_alive++;
 		}
@@ -255,5 +246,5 @@ unsigned ps::particle_group::num_particles_alive()
 
 double ps::particle_group::generate_particle_speed() const
 {
-	return m_randomised_velocity_speed == true ? generate_normal_random_variate<double>(m_velocity_speed, m_velocity_variance) : m_velocity_speed;
+	return m_randomised_velocity_speed ? generate_normal_random_variate<double>(m_velocity_speed, m_velocity_variance) : m_velocity_speed;
 }
