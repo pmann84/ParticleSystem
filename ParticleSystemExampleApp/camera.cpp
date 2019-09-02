@@ -6,8 +6,6 @@ void camera::update_camera()
 {
 	if (m_delta_move)
 		compute_pos(m_delta_move);
-	//if (m_delta_angle)
-	//	compute_dir(m_delta_angle);
 
 	// Reset transformations
 	glLoadIdentity();
@@ -41,8 +39,6 @@ void camera::process_key_press(int key, int xx, int yy)
 
 	switch (key) 
 	{
-		//case GLUT_KEY_LEFT: m_delta_angle = -m_rotate_speed; break;
-		//case GLUT_KEY_RIGHT: m_delta_angle = m_rotate_speed; break;
 		case GLUT_KEY_UP: m_delta_move = m_move_speed; break;
 		case GLUT_KEY_DOWN: m_delta_move = -m_move_speed; break;
 	}
@@ -53,8 +49,6 @@ void camera::process_key_release(int key, int x, int y)
 
 	switch (key)
 	{
-		//case GLUT_KEY_LEFT:
-		//case GLUT_KEY_RIGHT: m_delta_angle = 0.0f; break;
 		case GLUT_KEY_UP:
 		case GLUT_KEY_DOWN: m_delta_move = 0; break;
 	}

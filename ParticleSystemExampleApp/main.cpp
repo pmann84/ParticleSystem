@@ -98,10 +98,10 @@ void particle_demo_app::init_window(int argc, char* args[])
 	glEnable(GL_DEPTH_TEST);
 }
 
-particle_demo_app::particle_demo_app() : p_group(500, 2), m_domain_drawer()
+particle_demo_app::particle_demo_app() : p_group(750, 5), m_domain_drawer()
 {
 	p_group.time_interval(0.05);
-	p_group.particle_life(250, true, 4);
+	p_group.particle_life(150, true, 6);
 }
 
 void particle_demo_app::update()
@@ -124,11 +124,11 @@ void particle_demo_app::update()
 	//						 ps::generate_random_number_in_range(-random_vel_range, random_vel_range));
 	
 	p_group.source(source_domain)
-		   .velocity(velocity_domain, 3, true, 4)
-		   .sink(sink_domain)
-		   .stick(bounce_domain)
-		   .constant_force(gravity_vector)
-		   .update();
+		    .bounce(bounce_domain, 0.5)
+          .stick(sink_domain)
+		    .velocity(velocity_domain, 3, true, 4)
+		    .constant_force(gravity_vector)
+		    .update();
 }
 
 void particle_demo_app::resize(int width, int height)
@@ -155,12 +155,26 @@ void particle_demo_app::render()
 	glBegin(GL_POINTS);
 	for(auto& p: p_group.particles())
 	{
-		if (p.is_alive())
+		if (!p.is_dead())
 		{
+         // TODO: Fix this not applying the colour!
+         glColor3f(static_cast<float>(p.colour()[0]), static_cast<float>(p.colour()[1]), static_cast<float>(p.colour()[2]));
 			glVertex3f(p.position()[0], p.position()[1], p.position()[2]);
 		}
 	}
 	glEnd();
+   //// DEBUG: Render particle velocity vectors
+   //for (auto& p : p_group.particles())
+   //{
+   //   if (!p.is_dead() && !p.is_static())
+   //   {
+   //      glBegin(GL_LINES);
+   //      glVertex3f(p.position()[0], p.position()[1], p.position()[2]);
+   //      ps::vector3d end_pt = p.position() + 0.2 * p.velocity();
+   //      glVertex3f(end_pt[0], end_pt[1], end_pt[2]);
+   //      glEnd();
+   //   }
+   //}
 	p_group.draw_domains(m_domain_drawer);
 	glutSwapBuffers();
 }

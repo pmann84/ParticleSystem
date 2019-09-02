@@ -26,9 +26,9 @@
 // TODO: Implement Rectangle (2d) domain
 // TODO: Make multiple sources work correctly
 // TODO: Make multiple sinks work correctly
+// TODO: Make multiple domains work correctly (bounce, stick etc)
 // TODO: 
 // TODO: BUGS
-// TODO: Fix flickering when particles stick on disk domain, also particles that fall through domain after sticking
 // TODO: Fix issue with bouncing - possibly something to do with the fact the particles are moved onto the domain - sort out bounce velocity also incorrect
 
 namespace ps
@@ -37,8 +37,8 @@ namespace ps
 	{
 	public:
 		particle() = default;
-		explicit particle(int id);
-		particle(int id, vector3d position, vector3d velocity);
+		explicit particle(unsigned int id);
+		particle(unsigned int id, vector3d position, vector3d velocity);
 
 		vector3d position() const { return m_position; }
 		void position(vector3d position) { m_position = position; }
@@ -49,7 +49,14 @@ namespace ps
 		vector3d velocity() const { return m_velocity; }
 		void velocity(vector3d velocity) { m_velocity = velocity; }
 
-		vector3i colour() const { return m_colour; }
+		vector3i colour() const
+		{
+         // TODO: Make this a proper switch - for debug only!
+         double increment = static_cast<double>(m_age) / static_cast<double>(m_life);
+         int final_colour = 255.0 * (1.0 - increment);
+		   return vector3i(final_colour, final_colour, final_colour);
+         // return m_colour;
+		}
 		void colour(vector3i colour) { m_colour = colour; }
 
 		double alpha() const { return m_alpha; }
@@ -61,8 +68,8 @@ namespace ps
 		double mass() const { return m_mass; }
 		void mass(double mass) { m_mass = mass; }
 
-		int life() const { return m_life; }
-		void life(int life) { m_life = life; }
+		unsigned int life() const { return m_life; }
+		void life(unsigned int life) { m_life = life; }
 
 		unsigned int age() const { return m_age; }
 		void age(unsigned int age) { m_age = age; }
@@ -70,7 +77,10 @@ namespace ps
 		bool visible() const { return m_visible; }
 		void visible(bool visible) { m_visible = visible; }
 
-		bool is_alive() const;
+      bool is_static() const { return m_static; }
+      void set_static(bool is_static) { m_static = is_static; }
+
+      bool is_dead() const;
 		void reset();
 		void birthday();
 
@@ -81,7 +91,7 @@ namespace ps
 		}
 
 	private:
-		int m_id;
+      unsigned int m_id;
 		vector3d m_position;
 		vector3d m_previous_position;
 		vector3d m_velocity;
@@ -89,9 +99,10 @@ namespace ps
 		double m_alpha;
 		double m_radius;
 		double m_mass;
-		int m_life;
+		unsigned int m_life;
 		unsigned int m_age;
 		bool m_visible;
+      bool m_static; // Indicates whether this particle is subject to the forces of the system
 	};
 }
 
