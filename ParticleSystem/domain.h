@@ -24,6 +24,7 @@ namespace ps
 	{
 	public:
 		point_domain(vector3d point);
+      ~point_domain() = default;
 
 		vector3d generate_position() override;
 		vector3d generate_velocity(vector3d start_position, double speed) override;
@@ -42,6 +43,7 @@ namespace ps
 	{
 	public:
 		line_domain(vector3d begin, vector3d end);
+      ~line_domain() = default;
 
 		vector3d generate_position() override;
 		vector3d generate_velocity(vector3d start_position, double speed) override;
@@ -63,6 +65,7 @@ namespace ps
 	{
 	public:
 		disk_domain(vector3d centre, double inner_radius, double outer_radius, double zenith, double azimuth);
+      ~disk_domain() = default;
 
 		vector3d generate_position() override;
 		vector3d generate_velocity(vector3d start_position, double speed) override;
@@ -81,6 +84,24 @@ namespace ps
 		double m_inner_radius, m_outer_radius;
 		double m_theta, m_phi;
 	};
+
+   class triangle_domain : public idomain
+   {
+   public:
+      triangle_domain(vector3d p1, vector3d p2, vector3d p3);
+      ~triangle_domain() = default;
+
+      vector3d generate_position() override;
+      vector3d generate_velocity(vector3d start_position, double speed) override;
+      vector3d particle_domain_intersection(const particle& particle) const override;
+      bool has_entered_domain(const particle& particle) const override;
+      vector3d normal() override;
+      void draw(idomain_draw& draw_interface) override;
+
+   private:
+      vector3d m_p1, m_p2, m_p3;
+
+   };
 }
 
 #endif __DOMAIN_H__

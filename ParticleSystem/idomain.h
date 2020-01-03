@@ -8,7 +8,7 @@ namespace ps
 	class idomain
 	{
 	public:
-		virtual ~idomain();
+		virtual ~idomain() {}
 		virtual vector3d generate_position() = 0;
 		virtual vector3d generate_velocity(vector3d start_position, double speed) = 0;
 		virtual vector3d particle_domain_intersection(const particle& particle) const = 0;
@@ -16,10 +16,6 @@ namespace ps
 		virtual vector3d normal() = 0;
 		virtual void draw(idomain_draw& draw_interface) = 0;
 	};
-
-	inline idomain::~idomain()
-	{
-	}
 }
 
 #endif // __IDOMAIN_H__

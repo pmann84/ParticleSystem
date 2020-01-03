@@ -124,8 +124,8 @@ void particle_demo_app::update()
 	//						 ps::generate_random_number_in_range(-random_vel_range, random_vel_range));
 	
 	p_group.source(source_domain)
-		    .bounce(bounce_domain, 0.5)
-          .stick(sink_domain)
+		    .bounce(bounce_domain, 0.1)
+          .sink(sink_domain)
 		    .velocity(velocity_domain, 3, true, 4)
 		    .constant_force(gravity_vector)
 		    .update();

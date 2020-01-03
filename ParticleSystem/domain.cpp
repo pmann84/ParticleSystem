@@ -208,3 +208,31 @@ ps::vector3d ps::disk_domain::generate_position(float radius, float angle) const
 	vector3d newpos(radius*cos(angle)*perp + radius*sin(angle)*ncrossp + m_disc_centre);
 	return newpos;
 }
+
+ps::triangle_domain::triangle_domain(vector3d p1, vector3d p2, vector3d p3) : m_p1(p1), m_p2(p2), m_p3(p3)
+{
+}
+
+ps::vector3d ps::triangle_domain::generate_position()
+{
+}
+
+ps::vector3d ps::triangle_domain::generate_velocity(vector3d start_position, double speed)
+{
+}
+
+ps::vector3d ps::triangle_domain::particle_domain_intersection(const particle& particle) const
+{
+}
+
+bool ps::triangle_domain::has_entered_domain(const particle& particle) const
+{
+}
+
+ps::vector3d ps::triangle_domain::normal()
+{
+}
+
+void ps::triangle_domain::draw(idomain_draw& draw_interface)
+{
+}

@@ -27,9 +27,9 @@
 // TODO: Make multiple sources work correctly
 // TODO: Make multiple sinks work correctly
 // TODO: Make multiple domains work correctly (bounce, stick etc)
-// TODO: 
+// TODO: Change the disk domain to be defined by a normal, inner & outer radius, angle range (for segments)
+//
 // TODO: BUGS
-// TODO: Fix issue with bouncing - possibly something to do with the fact the particles are moved onto the domain - sort out bounce velocity also incorrect
 
 namespace ps
 {

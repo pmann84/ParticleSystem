@@ -9,9 +9,13 @@
 
 namespace ps
 {
-	//enum class intersect_type;
-
-	double generate_random_number_in_range(double begin, double end);
+	inline double generate_random_number_in_range(double begin, double end)
+   {
+      std::uniform_real_distribution<double> uniform_dist(begin, end);
+      std::random_device random_device;
+      std::default_random_engine rand(random_device());
+      return uniform_dist(rand);
+   }
 
 	template<class TYPE>
 	unsigned generate_normal_random_variate(TYPE mean, TYPE variance)
